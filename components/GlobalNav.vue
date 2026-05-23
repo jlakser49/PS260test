@@ -20,7 +20,7 @@
                 { 'is-active': isActiveRoute(item.Link) || (isFeaturedRoute && item.Label === 'Editors') }
               ]"
               :style="{
-                '--link-active-color': item.activeColor || 'var(--color-white)'
+                '--link-active-color': item.activeColor || (item.Label?.toLowerCase() === 'ai' ? 'var(--color-blue)' : 'var(--color-white)')
               }"
             >
               {{ item.Label }}
@@ -347,7 +347,7 @@ onBeforeUnmount(() => {
   }
 
   &.nav-name-ai.is-active {
-    color: var(--color-white);
+    color: var(--color-blue);
   }
 
   &.nav-name-ai:hover {
