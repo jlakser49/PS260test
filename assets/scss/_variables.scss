@@ -1,0 +1,73 @@
+:root {
+  --unit-header-height: 80px;
+  --unit-header-height-small: 80px;
+  --easing-motion: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --header-bg-color: rgba(0, 0, 0, 1);
+  
+  --color-yellow: #f2a900;
+  --color-orange: #fe5000;
+  --color-white: #fff;
+  --color-black: #000;
+  --color-gray: #878787;
+  --color-purple: #753bbd;
+  --color-blue: #00aaff;
+  --color-green: #00b140;
+
+  // --video-min-height: 625px;
+  --video-bg-color: rgba(0, 0, 0, 0.1);
+
+  --header-plus-footer-height: 138px;
+  
+  --window-height: calc(100svh - var(--header-plus-footer-height));
+  
+  --window-editor-height: calc((100svh) - var(--header-plus-footer-height));
+  --window-editor-remaining-heights: calc((100svh));
+  --window-siminan-reel: calc(100svh - var(--header-plus-footer-height));
+
+  --unit-100vh: 100svh;
+  
+}
+
+// Cinema
+@media (min-width: 1440px) {
+  :root {
+    --window-editor-height: calc((100svh) - var(--header-plus-footer-height));
+    --window-editor-remaining-heights: calc((100svh) - 58px);
+  }
+}
+
+// Small Desktop
+@media (max-width: 1023px) {
+  :root {
+    --window-editor-height: calc((100svh) - var(--header-plus-footer-height));
+    --window-editor-remaining-heights: calc((100svh) - 58px);
+  }
+}
+
+// Mobile
+@media (max-width: 768px) {
+  :root {
+    --unit-header-height: 70px;
+    --header-plus-footer-height: 128px;
+
+    --window-height: calc((100svh - var(--header-plus-footer-height)) + 10px);
+
+    --window-editor-height: calc(((100svh) - var(--header-plus-footer-height)));
+    --window-editor-remaining-heights: calc(((100svh) - 58px));
+
+  // --window-editor-remaining-heights: calc((100svh - 30vh) - 58px);
+
+  }
+}
+
+@media (orientation: landscape) and (hover: none) and (pointer: coarse)  {
+  :root {
+    --unit-header-height: 60px;
+    --header-plus-footer-height: 120px;
+  --window-height: calc((100lvh - var(--header-plus-footer-height)));
+
+  --window-editor-height: calc(((100lvh - 25vh) - var(--header-plus-footer-height)) - 10px);
+  --window-editor-remaining-heights: calc(((100lvh - 25vh) - 58px) - 10px);
+  }
+}

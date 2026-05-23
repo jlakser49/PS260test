@@ -1,0 +1,16 @@
+node_modules
+storybook-static
+*.log*
+.nuxt
+.nitro
+.cache
+.output
+.env
+dist
+.vercel
+
+*storybook.log
+
+# HTTPS Proxy certificates
+localhost.pem
+localhost-key.pem

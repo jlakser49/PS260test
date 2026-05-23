@@ -1,0 +1,135 @@
+// assets/scss/main.scss
+
+@font-face {
+    font-family: 'PS260';
+    src: url('/simian-assets/videos/ps260-font.woff2') format('woff2'),
+         url('/simian-assets/videos/ps260-font.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap; /* Use swap instead of fallback for faster text rendering */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", serif;
+    font-optical-sizing: auto;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "kern" 1;
+    font-kerning: normal;
+
+    background-color: var(--color-black);
+}
+
+/* Scroll state styles */
+.has-scrolled {
+    /* Add your scroll-triggered styles here */
+    transition: background-color 0.3s ease;
+}
+
+/* Hide header and footer for embedded pages */
+.hide-header-footer {
+    .global-header,
+    .global-hamburger,
+    .global-footer, 
+    .logo-cycler {
+          display: none !important;
+      }
+      
+      .page-wrapper {
+          padding: 0 !important;
+          margin: 0 !important;
+      }
+
+      .reel-media {
+        height: 100svh !important;
+      }
+      .reels-container.block-item:last-child {
+        padding-bottom: 0 !important;
+      }
+    }
+
+
+/* Block item styling for all Storyblok components */
+.block-item {
+    display: block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 35px;
+    padding-top: 35px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--color-black);
+    z-index: 25;
+    
+    &:first-child {
+      padding-bottom: 0;
+      padding-top: 0;
+    }
+    &.reels-container {
+      padding: 0;
+    }
+    &:last-child {
+      padding-bottom: 100px !important;
+    }
+}
+
+.page {
+ padding-top: var(--unit-header-height); 
+}
+
+.qa-list {
+  padding-top: 70px;
+}
+
+// .page-editors {
+//   margin-top: 0;
+// }
+  
+// Other global styles
+
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s var(--easing-motion);
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  // transform: scale(.85);
+  // filter: blur(12px);
+}
+
+// Special transitions when coming from reel page
+.from-reel-transition {
+  .page-enter-active {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .page-enter-from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+}
+
+@include lt-tablet {
+  .block-item {
+    padding-bottom: 45px;
+
+    &:first-child {
+      padding-bottom: 0;
+    }
+    &:last-child {
+      padding-bottom: 35px !important;
+    }
+  }
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}

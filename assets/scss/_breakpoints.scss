@@ -1,0 +1,73 @@
+// _breakpoints.scss
+
+// Media query mixins
+@mixin gt-cinema {
+  @media only screen and (min-width: 1440px) {
+    @content;
+  }
+}
+
+@mixin lt-cinema {
+  @media only screen and (max-width: 1439px) {
+    @content;
+  }
+}
+
+@mixin gt-small-desktop {
+  @media only screen and (min-width: 959px) {
+    @content;
+  }
+}
+@mixin lt-small-desktop {
+  @media only screen and (max-width: 958px) {
+    @content;
+  }
+}
+
+@mixin lt-tablet {
+  @media only screen and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@mixin lt-phone {
+  @media only screen and (max-width: 850px) {
+    @content;
+  }
+}
+
+@mixin lt-small-phone {
+  @media only screen and (max-width: 600px) {
+    @content;
+  }
+}
+
+@mixin lt-small-height {
+  @media only screen and (max-height: 640px) and (min-width: 850px) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media only screen and (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin phone-landscape {
+  @media (orientation: landscape) and (hover: none) and (pointer: coarse)  {
+    @content;
+  }
+}
+
+@mixin pad {
+  @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    @content;
+  }
+}
+
+@mixin has-hover {
+  @media (hover: hover) {
+    @content;
+  }
+}

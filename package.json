@@ -1,0 +1,29 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "NITRO_PRESET=vercel-edge nuxt build",
+    "dev": "nuxt dev",
+    "proxy": "mkcert -install && mkcert localhost && local-ssl-proxy --source 3010 --target 3000 --cert localhost.pem --key localhost-key.pem"
+  },
+  "devDependencies": {
+    "@nuxtjs/google-fonts": "3.2.0",
+    "@nuxtjs/sitemap": "7.2.4",
+    "@nuxtjs/style-resources": "^1.2.2",
+    "nuxt": "^3.14.1592",
+    "nuxt-gtag": "^3.0.2",
+    "sass": "^1.81.0",
+    "sass-embedded": "^1.81.0",
+    "sass-loader": "^16.0.3"
+  },
+  "dependencies": {
+    "@nuxt/image": "^1.8.1",
+    "@nuxtjs/seo": "^2.0.2",
+    "@storyblok/nuxt": "^6.2.0",
+    "@vercel/speed-insights": "^1.1.0",
+    "fast-xml-parser": "^4.5.1",
+    "lodash": "^4.17.21",
+    "lottie-web": "^5.12.2",
+    "nuxt-auth-utils": "^0.5.15"
+  },
+  "packageManager": "pnpm@9.15.3+sha512.1f79bc245a66eb0b07c5d4d83131240774642caaa86ef7d0434ab47c0d16f66b04e21e0c086eb61e62c77efc4d7f7ec071afad3796af64892fae66509173893a"
+}
