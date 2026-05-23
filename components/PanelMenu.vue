@@ -134,7 +134,32 @@ const { data, refresh } = await useAsyncData(
 )
 
 // Computed properties
-const menuItems = computed(() => data.value?.content?.menu_items || [])
+const aiMenuItem = {
+  _uid: 'ai-menu-item',
+  Label: 'AI',
+  Link: {
+    linktype: 'url',
+    url: '/ai'
+  },
+  activeColor: 'var(--color-white)'
+}
+
+const menuItems = computed(() => {
+  const items = data.value?.content?.menu_items || []
+  const hasAi = items.some(item => item.Label?.toLowerCase() === 'ai')
+  if (hasAi) {
+    return items
+  }
+
+  const contactIndex = items.findIndex(item => item.Label?.toLowerCase() === 'contact')
+  if (contactIndex >= 0) {
+    const nextItems = [...items]
+    nextItems.splice(contactIndex, 0, aiMenuItem)
+    return nextItems
+  }
+
+  return [...items, aiMenuItem]
+})
 
 const internalPaths = computed(() => [
   '/'
