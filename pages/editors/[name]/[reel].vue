@@ -93,6 +93,26 @@ const formatSlug = (title) => {
 const { data: fetchedData, pending, error: fetchError } = useAsyncData(
   `editor-${route.params.name}-${route.params.reel}`,
   async () => {
+    // ── Offline bypass for Cassandra Jolie ───────────────────────────────
+    if (route.params.name === 'cassandra-jolie') {
+      const simianData = await $fetch('/api/simian', {
+        method: 'POST',
+        body: { reelId: '163' } // ← CASSANDRA JOLIE MAIN REEL ID
+      });
+
+      if (!simianData?.root?.media) throw new Error('Invalid media data');
+
+      const mediaItems = Array.isArray(simianData.root.media)
+        ? simianData.root.media
+        : [simianData.root.media];
+
+      return {
+        editorData: { Name: 'Cassandra Jolie' },
+        mediaItems
+      };
+    }
+    // ── End offline bypass ───────────────────────────────────────────────
+
     try {
       // Get editor data from Storyblok
       const storyblokApi = useStoryblokApi();
@@ -103,7 +123,7 @@ const { data: fetchedData, pending, error: fetchError } = useAsyncData(
       // Find matching person
       let matchingPerson = null;
       for (const category of editorsData.story.content.body) {
-        const person = category.Person.find(p => 
+        const person = category.Person.find(p =>
           p.Name.toLowerCase().replace(/\s+/g, '-') === route.params.name
         );
         if (person) {

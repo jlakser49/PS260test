@@ -22,6 +22,7 @@
           @hover="handleReelHover"
           @unhover="handleReelUnhover"
           ref="reelRefs"
+          :style="reelAspectStyle(media)"
         />
       </div>
 
@@ -66,12 +67,62 @@ const handleReelUnhover = () => {
   isAnyReelHovered.value = false;
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// CASSANDRA JOLIE — offline, no Storyblok.
+// MAIN_REEL_ID   → primary scrollable reel grid
+// STICKY_REEL_ID → large hero/banner video pinned at the top
+// ─────────────────────────────────────────────────────────────────────────────
+const CASS_MAIN_REEL_ID   = '163'; // ← CASSANDRA JOLIE MAIN REEL ID
+const CASS_STICKY_REEL_ID = '160'; // ← CASSANDRA JOLIE HERO/BANNER REEL ID
+
 // Fetch data using useAsyncData
 const { data, error, pending } = await useAsyncData(
   `editor-${route.params.name}`,
   async () => {
+    // ── Offline bypass for Cassandra Jolie ───────────────────────────────
+    if (route.params.name === 'cassandra-jolie') {
+      let reelData = null;
+      let stickyVideo = null;
+      let usingStickyOverride = false;
+
+      if (CASS_MAIN_REEL_ID) {
+        reelData = await $fetch('/api/simian', {
+          method: 'POST',
+          body: { reelId: CASS_MAIN_REEL_ID }
+        });
+      }
+
+      if (CASS_STICKY_REEL_ID) {
+        try {
+          const stickyReelData = await $fetch('/api/simian', {
+            method: 'POST',
+            body: { reelId: CASS_STICKY_REEL_ID }
+          });
+          if (stickyReelData?.root?.media) {
+            if (Array.isArray(stickyReelData.root.media) && stickyReelData.root.media.length > 0) {
+              stickyVideo = stickyReelData.root.media[0];
+              usingStickyOverride = true;
+            } else if (typeof stickyReelData.root.media === 'object') {
+              stickyVideo = stickyReelData.root.media;
+              usingStickyOverride = true;
+            }
+          }
+        } catch (err) {
+          console.error('Error loading Cassandra sticky reel:', err);
+        }
+      }
+
+      return {
+        Name: 'Cassandra Jolie',
+        reelData,
+        stickyVideo,
+        usingStickyOverride
+      };
+    }
+    // ── End offline bypass ───────────────────────────────────────────────
+
     const storyblokApi = useStoryblokApi();
-    
+
     try {
       // First, get all editors to find the matching person
       const { data: editorsData } = await storyblokApi.get('cdn/stories/editors', {
@@ -375,6 +426,15 @@ const hasBio = computed(() => {
 const noQANoBio = computed(() => {
   return !hasQA.value && !hasBio.value;
 });
+
+const reelAspectStyle = (media) => {
+  const w = parseInt(media.media_width || 0);
+  const h = parseInt(media.media_height || 0);
+  if (h > w && w > 0) {
+    return { aspectRatio: `${w}/${h}`, height: 'auto', paddingBottom: '0' };
+  }
+  return {};
+};
 
 // Intersection Observer setup
 const setupVideoObserver = () => {

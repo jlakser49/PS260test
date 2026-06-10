@@ -2,14 +2,22 @@
 <template>
   <div class="category">
     <h2 v-if="showTitle">{{ blok.name }}</h2>
-    <GalleryList 
-      :items="galleryItems" 
+    <GalleryList
+      :items="galleryItems"
       :loading="pending"
     />
   </div>
 </template>
 
 <script setup>
+// ─────────────────────────────────────────────────────────────────────────────
+// CASSANDRA JOLIE — offline entry injected after "Ed Greene"
+// CASS_HOVER_REEL_ID  → dedicated hover/preview reel (enter ID to override)
+// CASS_MAIN_REEL_ID   → fallback: first video from main reel used when no override
+// ─────────────────────────────────────────────────────────────────────────────
+const CASS_HOVER_REEL_ID = '164'; // ← ENTER CASSANDRA JOLIE HOVER REEL ID HERE (optional override)
+const CASS_MAIN_REEL_ID  = '163'; // ← CASSANDRA JOLIE MAIN REEL ID (fallback for hover)
+
 const props = defineProps({
   blok: {
     type: Object,
@@ -84,14 +92,51 @@ const { data: personsWithReels, pending, error } = await useAsyncData(
   }
 );
 
+// Fetch Cassandra Jolie's hover reel — uses override ID if set, otherwise falls back to main reel
+const { data: cassHoverData } = await useAsyncData(
+  'cass-jolie-hover',
+  async () => {
+    const reelId = CASS_HOVER_REEL_ID || CASS_MAIN_REEL_ID;
+    if (!reelId) return null;
+    try {
+      return await $fetch('/api/simian', {
+        method: 'POST',
+        body: { reelId }
+      });
+    } catch (err) {
+      console.error('Error fetching Cassandra Jolie hover reel:', err);
+      return null;
+    }
+  }
+);
+
+// Build the static Cassandra Jolie gallery entry
+const cassEntry = computed(() => {
+  const media = cassHoverData.value?.root?.media;
+  const first  = Array.isArray(media) ? media[0] : (media ?? {});
+  return {
+    title:      'Cassandra Jolie',
+    to:         '/editors/cassandra-jolie',
+    media_file: first?.media_file ?? '',
+    thumbnail:  first?.thumbnail  ?? ''
+  };
+});
+
 // Computed properties
-const showTitle = computed(() => 
+const showTitle = computed(() =>
   props.blok.name.toLowerCase() !== 'editors'
 );
 
 const galleryItems = computed(() => {
   if (!personsWithReels.value) return [];
-  return personsWithReels.value.map(person => person.processedData);
+  const items = personsWithReels.value.map(person => person.processedData);
+
+  // Inject Cassandra Jolie after Ed Greene — only in the category that contains him
+  const edGreeneIndex = items.findIndex(
+    item => item.title.toLowerCase() === 'ed greene'
+  );
+  if (edGreeneIndex < 0) return items;
+  return [...items.slice(0, edGreeneIndex + 1), cassEntry.value, ...items.slice(edGreeneIndex + 1)];
 });
 
 // Error handling

@@ -52,6 +52,10 @@ const props = defineProps({
   mode: {
     type: String,
     default: 'css'
+  },
+  portrait: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -68,7 +72,7 @@ const hasLoaded = ref(true)
 const classes = computed(() => [
   "video-stage",
   "has-loaded",
-  { "is-mobile": isMobile.value },
+  { "is-mobile": isMobile.value, "is-portrait": props.portrait },
   `mode-${props.mode}`
 ])
 
@@ -147,6 +151,17 @@ onMounted(() => {
       max-width: 100%;
       height: auto;
       padding: 0;
+    }
+  }
+
+  &.is-portrait {
+    .video-container {
+      max-height: none;
+    }
+    .video {
+      object-fit: contain;
+      max-width: 400px;
+      max-height: 85vh;
     }
   }
 }

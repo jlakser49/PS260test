@@ -10,6 +10,7 @@
           class="reel-stage"
           ref="containerRef"
           :poster="currentMedia.thumbnail"
+          :portrait="isPortrait"
         >
           <template #top>
             <div class="header-container">
@@ -134,7 +135,7 @@
     if (!props.mediaItems || !Array.isArray(props.mediaItems) || !props.slugParam) {
       return null;
     }
-    
+
     try {
       return props.mediaItems.find(media => {
         if (!media || !media.title) return false;
@@ -144,6 +145,12 @@
       // console.error('Error finding current media:', error);
       return null;
     }
+  });
+
+  const isPortrait = computed(() => {
+    const w = parseInt(currentMedia.value?.media_width || 0);
+    const h = parseInt(currentMedia.value?.media_height || 0);
+    return h > w && w > 0;
   });
   
   // Add these missing helper functions
