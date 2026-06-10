@@ -156,12 +156,14 @@ onMounted(() => {
 
   &.is-portrait {
     .video-container {
+      flex: 1 1 0;
+      min-height: 0;
       max-height: none;
     }
     .video {
       object-fit: contain;
       max-width: 400px;
-      max-height: 85vh;
+      height: 100%;
     }
   }
 }
