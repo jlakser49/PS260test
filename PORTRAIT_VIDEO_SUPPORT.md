@@ -88,6 +88,8 @@ const classes = computed(() => [
 - `max-width: 400px` keeps the portrait video at a phone-like width on desktop — consistent with how 9:16 content is presented on platforms like TikTok/YouTube Shorts.
 - `max-height: 85vh` prevents the video from overflowing the viewport on shorter screens.
 
+> **Note:** This initial CSS was later revised — see [Mobile Fix](#mobile-fix-portrait-video-cut-off-on-iphone) below.
+
 ---
 
 ### 3. `components/ReelMedia.vue`
@@ -137,6 +139,46 @@ Reads `media_width` and `media_height` from the currently active Simian media it
    - Removes the `max-height: 450px` cap on the video container.
    - Switches video rendering to `object-fit: contain` — full portrait frame is visible.
    - Constrains the video to `max-width: 400px` / `max-height: 85vh` for a clean presentation.
+
+---
+
+## Mobile Fix — Portrait Video Cut Off on iPhone
+
+### Problem
+
+On iPhone, the portrait video was getting cut off at the bottom inside the lightbox. Root cause:
+
+- `--window-height` = `100svh - 128px` (subtracts the site's nav height).
+- The lightbox stage (`VideoStage`) is that height, with `overflow: hidden`.
+- The stage is a **flex column** (set by `ReelMedia.vue`'s `:deep` override) with three children: `slot-top` (header ~70px), `.video-container`, and `slot-bottom` (info ~80px).
+- The original `.is-portrait` CSS used `height: auto; max-height: 85vh` on the video, letting it grow to its full natural height (~693px on a 390px-wide iPhone 14). Combined with the header and info slots, the total exceeded the stage height and the bottom of the video was clipped.
+
+### Fix — `components/VideoStage.vue`
+
+Replaced the `max-height: 85vh` approach with a flex-based layout so `.video-container` only occupies the space **remaining between the header and info slots** — it can never overflow.
+
+**Updated CSS block** (replaces the original `.is-portrait` block):
+```scss
+&.is-portrait {
+  .video-container {
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: none;
+  }
+  .video {
+    object-fit: contain;
+    max-width: 400px;
+    height: 100%;
+  }
+}
+```
+
+- `flex: 1 1 0` — `.video-container` becomes a flex child that grows to fill all remaining vertical space after the header and info slots claim their natural heights.
+- `min-height: 0` — required on flex children to allow shrinking below their content size; without this the container can still overflow.
+- `max-height: none` — removes the `450px` cap from the base styles.
+- `height: 100%` on `.video` — fills the flex container exactly; `object-fit: contain` then scales the portrait frame to fit within that height without cropping.
+
+**Why not just reduce `max-height`:** A fixed `max-height` value (e.g., `60vh`) would need to account for the exact heights of the header and info slots, which vary by device and content. The flex approach adapts to any screen size automatically.
 
 ---
 

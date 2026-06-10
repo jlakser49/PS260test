@@ -22,6 +22,7 @@
           @hover="handleReelHover"
           @unhover="handleReelUnhover"
           ref="reelRefs"
+          :class="reelAspectClass(media)"
           :style="reelAspectStyle(media)"
         />
       </div>
@@ -436,6 +437,12 @@ const reelAspectStyle = (media) => {
   return {};
 };
 
+const reelAspectClass = (media) => {
+  const w = parseInt(media.media_width || 0);
+  const h = parseInt(media.media_height || 0);
+  return h > w && w > 0 ? 'portrait' : '';
+};
+
 // Intersection Observer setup
 const setupVideoObserver = () => {
   const observer = new IntersectionObserver((entries) => {
@@ -562,6 +569,19 @@ useHead(() => ({
     }
   }
 
+  .reel.portrait {
+    width: calc(33.333% - 3.334px);
+
+    &:nth-child(odd), &:nth-child(even) {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    &:not(:nth-child(3n)) {
+      margin-right: 5px;
+    }
+  }
+
 
 .loading-container,
 .error-container {
@@ -623,10 +643,18 @@ useHead(() => ({
     width: 100%; /* Full width on mobile */
     padding-bottom: 56.25%; /* 16:9 aspect ratio (9/16 = 0.5625 = 56.25%) */
     margin-bottom: 5px; /* Keep consistent 5px vertical spacing */
-    
+
     /* Reset the horizontal margins since we're in a column */
     &:nth-child(odd), &:nth-child(even) {
       margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  .reel.portrait {
+    width: 100%;
+
+    &:not(:nth-child(3n)) {
       margin-right: 0;
     }
   }
