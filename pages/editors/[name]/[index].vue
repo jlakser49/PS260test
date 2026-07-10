@@ -113,8 +113,63 @@ const { data, error, pending } = await useAsyncData(
         }
       }
 
+      const CASS_BIO = {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: "Cassandra “Cas” Jolie brings the rare combination of editor, designer, animator, and artist. Her work for brands including META, Hinge, Champs, NASA, Capitol Records, and Def Jam Recordings is rooted in culture, design, and emotion. Known for her fluency in short-form and digital content, Cas knows how to build work that earns attention." }]
+          },
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: "A proud Boricua, Cas pairs a designer's eye with an editor's sensibility, bringing depth, style, and intention to every project. When she's not shaping stories on screen, she's likely making them on stage with her band." }]
+          },
+          {
+            type: 'paragraph',
+            content: [{ type: 'text', text: "“Honestly, I think being an artist is just in my blood.” — Cas" }]
+          }
+        ]
+      };
+
+      const CASS_QA = [
+        {
+          q: 'What would people be surprised to know about you?',
+          a: "I am a musician and I just went on tour! I've had a really beautiful music journey writing songs, performing in live venues and had a few videos go viral on Tiktok."
+        },
+        {
+          q: "What's the most memorable feedback you've received from a director or client?",
+          a: "Someone once told me I'm super intentional and thoughtful and they felt it in how I created my decks and walked them through the phases of the work. They told me to never lose my love for creating and storytelling."
+        },
+        {
+          q: 'If your computer could talk, what do you think it would say about you as an editor?',
+          a: 'I think my computer would ask to clear my screenshots off my desktop screen haha'
+        },
+        {
+          q: "If you weren't an editor, what would you be doing?",
+          a: "I think i'd be a sous chef in a 3 star michelin rated restaurant <3"
+        },
+        {
+          q: "When you need to reset creatively, what's your go-to hobby or activity?",
+          a: "I love cooking! There's something about making a yummy meal and sitting on the couch in pjs that resets my whole brain haha"
+        }
+      ];
+
+      const CASS_CONTENT = {
+        type: 'doc',
+        content: CASS_QA.map(({ q, a }) => ({
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: q },
+            { type: 'hard_break' },
+            { type: 'text', text: a }
+          ]
+        }))
+      };
+
       return {
         Name: 'Cassandra Jolie',
+        Bio: CASS_BIO,
+        Content: CASS_CONTENT,
         reelData,
         stickyVideo,
         usingStickyOverride
