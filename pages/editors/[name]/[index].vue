@@ -142,15 +142,15 @@ const { data, error, pending } = await useAsyncData(
         },
         {
           q: 'If your computer could talk, what do you think it would say about you as an editor?',
-          a: 'I think my computer would ask to clear my screenshots off my desktop screen haha'
+          a: 'I think my computer would ask to clear my screenshots off my desktop screen.'
         },
         {
           q: "If you weren't an editor, what would you be doing?",
-          a: "I think i'd be a sous chef in a 3 star michelin rated restaurant <3"
+          a: "I think I'd be a sous chef in a 3 star Michelin rated restaurant <3"
         },
         {
           q: "When you need to reset creatively, what's your go-to hobby or activity?",
-          a: "I love cooking! There's something about making a yummy meal and sitting on the couch in pjs that resets my whole brain haha"
+          a: "I love cooking! There's something about making a yummy meal and sitting on the couch in pjs that resets my whole brain."
         }
       ];
 
