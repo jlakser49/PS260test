@@ -12,7 +12,7 @@
         :name="editorName"
         :is-dimmed="isAnyReelHovered"
       />
-      <div v-if="data" class="reels-container">
+      <div v-if="data" class="reels-container" ref="reelsContainerRef">
         <ReelVideo
           v-for="(media, i) in remainingVideos"
           :key="media.id"
@@ -23,7 +23,7 @@
           @unhover="handleReelUnhover"
           ref="reelRefs"
           :class="reelAspectClass(media)"
-          :style="reelAspectStyle(media)"
+          :style="reelGridStyle(media)"
         />
       </div>
 
@@ -483,19 +483,59 @@ const noQANoBio = computed(() => {
   return !hasQA.value && !hasBio.value;
 });
 
-const reelAspectStyle = (media) => {
-  const w = parseInt(media.media_width || 0);
-  const h = parseInt(media.media_height || 0);
-  if (h > w && w > 0) {
-    return { aspectRatio: `${w}/${h}`, height: 'auto', paddingBottom: '0' };
-  }
-  return {};
-};
-
 const reelAspectClass = (media) => {
   const w = parseInt(media.media_width || 0);
   const h = parseInt(media.media_height || 0);
   return h > w && w > 0 ? 'portrait' : '';
+};
+
+// ── Masonry grid ─────────────────────────────────────────────────────────────
+// CSS Grid with dense packing + a fine-grained row unit: each item gets a
+// grid-column span (2 or 3 of 6 columns) and a computed grid-row span sized to
+// its real aspect ratio, so mixed 16:9/9:16/4:3 clips tile with no dead space.
+const GRID_COLUMNS = 6;
+const GRID_GAP = 5; // px, matches .reels-container gap
+const ROW_UNIT = 1; // px, height of one implicit grid row
+const MOBILE_BREAKPOINT = 850; // matches the lt-phone SCSS mixin
+
+const reelsContainerRef = ref(null);
+const containerWidth = ref(0);
+const isMobileLayout = ref(false);
+
+const measureGridLayout = () => {
+  if (!reelsContainerRef.value) return;
+  containerWidth.value = reelsContainerRef.value.clientWidth;
+  isMobileLayout.value = window.innerWidth <= MOBILE_BREAKPOINT;
+};
+
+let gridResizeObserver = null;
+let debouncedMeasure = null;
+
+const spanColumnsFor = (media) => {
+  if (isMobileLayout.value) return GRID_COLUMNS; // full width, single column on mobile
+  return reelAspectClass(media) === 'portrait' ? 2 : 3;
+};
+
+const reelGridStyle = (media) => {
+  const w = parseInt(media.media_width || 0);
+  const h = parseInt(media.media_height || 0);
+  const spanCols = spanColumnsFor(media);
+  const style = { gridColumn: `span ${spanCols}` };
+
+  if (w > 0 && h > 0) {
+    // Fallback so the item has a sane height before the grid is measured client-side.
+    style.aspectRatio = `${w}/${h}`;
+
+    if (containerWidth.value > 0) {
+      const colUnit = (containerWidth.value - (GRID_COLUMNS - 1) * GRID_GAP) / GRID_COLUMNS;
+      const widthPx = spanCols * colUnit + (spanCols - 1) * GRID_GAP;
+      const heightPx = widthPx * (h / w);
+      const rowSpan = Math.max(1, Math.ceil((heightPx + GRID_GAP) / (ROW_UNIT + GRID_GAP)));
+      style.gridRowEnd = `span ${rowSpan}`;
+    }
+  }
+
+  return style;
 };
 
 // Intersection Observer setup
@@ -517,6 +557,17 @@ onMounted(async () => {
     await nextTick();
     videoObserver = setupVideoObserver();
   }
+
+  measureGridLayout();
+  debouncedMeasure = () => {
+    clearTimeout(debouncedMeasure._t);
+    debouncedMeasure._t = setTimeout(measureGridLayout, 150);
+  };
+  window.addEventListener('resize', debouncedMeasure);
+  if (window.ResizeObserver && reelsContainerRef.value) {
+    gridResizeObserver = new ResizeObserver(measureGridLayout);
+    gridResizeObserver.observe(reelsContainerRef.value);
+  }
 });
 
 onBeforeUnmount(() => {
@@ -524,7 +575,16 @@ onBeforeUnmount(() => {
     videoObserver.disconnect();
   }
 
+  if (gridResizeObserver) {
+    gridResizeObserver.disconnect();
+  }
+
   if (process.client) {
+    if (debouncedMeasure) {
+      clearTimeout(debouncedMeasure._t);
+      window.removeEventListener('resize', debouncedMeasure);
+    }
+
     Object.values(videoRefs.value).forEach(video => {
       if (video) {
         video.pause();
@@ -580,14 +640,16 @@ useHead(() => ({
     position: relative;
     z-index: 30;
     margin-top: 345px;
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 1px; /* fine-grained track height; JS sets an exact grid-row span per item */
+    grid-auto-flow: dense; /* fills gaps left by shorter neighbors instead of leaving blank space */
+    align-items: start;
     width: 100%;
     background: var(--color-black);
     border-top: 5px solid var(--color-black);
-    gap: 0; /* No gap, we're using margins on children */
+    gap: 5px; /* Consistent spacing regardless of how aspect ratios interleave */
     box-sizing: border-box;
-    justify-content: space-between; /* Distribute items with space between */
   }
 
   &.has-no-qa-no-bio {
@@ -605,36 +667,10 @@ useHead(() => ({
     z-index: 20;
   }
   .reel {
+    /* grid-column and grid-row spans are set inline per-item in reelGridStyle() */
     position: relative;
-    width: calc(50% - 2.5px); /* Adjust width to account for the horizontal gap */
-    /* Use aspect ratio instead of fixed heights */
-    height: 0;
-    padding-bottom: 28.125%; /* 16:9 aspect ratio (9/16 = 0.5625 * 50% = 28.125%) */
     overflow: hidden;
     box-sizing: border-box;
-    transition: all 0.4s var(--easing-motion);
-    margin-bottom: 5px; /* Exactly 5px vertical spacing between reels */
-
-    &:nth-child(odd) {
-      margin-right: 2.5px; /* Horizontal spacing between odd and even */
-    }
-
-    &:nth-child(even) {
-      margin-left: 2.5px; /* Horizontal spacing between odd and even */
-    }
-  }
-
-  .reel.portrait {
-    width: calc(33.333% - 3.334px);
-
-    &:nth-child(odd), &:nth-child(even) {
-      margin-left: 0;
-      margin-right: 0;
-    }
-
-    &:not(:nth-child(3n)) {
-      margin-right: 5px;
-    }
   }
 
 
@@ -691,28 +727,7 @@ useHead(() => ({
 }
 
 @include lt-phone {
-  .reels-container {
-    flex-direction: column;
-  }
-  .reel {
-    width: 100%; /* Full width on mobile */
-    padding-bottom: 56.25%; /* 16:9 aspect ratio (9/16 = 0.5625 = 56.25%) */
-    margin-bottom: 5px; /* Keep consistent 5px vertical spacing */
-
-    /* Reset the horizontal margins since we're in a column */
-    &:nth-child(odd), &:nth-child(even) {
-      margin-left: 0;
-      margin-right: 0;
-    }
-  }
-
-  .reel.portrait {
-    width: 100%;
-
-    &:not(:nth-child(3n)) {
-      margin-right: 0;
-    }
-  }
+  /* Single-column layout on mobile is handled by isMobileLayout in reelGridStyle() */
 }
 
 }
