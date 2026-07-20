@@ -74,7 +74,7 @@ const handleReelUnhover = () => {
 // STICKY_REEL_ID → large hero/banner video pinned at the top
 // ─────────────────────────────────────────────────────────────────────────────
 const CASS_MAIN_REEL_ID   = '163'; // ← CASSANDRA JOLIE MAIN REEL ID
-const CASS_STICKY_REEL_ID = '160'; // ← CASSANDRA JOLIE HERO/BANNER REEL ID
+const CASS_STICKY_REEL_ID = '165'; // ← CASSANDRA JOLIE HERO/BANNER REEL ID
 
 // Fetch data using useAsyncData
 const { data, error, pending } = await useAsyncData(
