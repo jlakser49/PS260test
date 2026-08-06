@@ -79,22 +79,13 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- ============ RIGHT-JUSTIFIED TITLE BANNER ============ -->
-    <div class="title-banner">
-      <img
-        class="ai-title-banner-img"
-        src="https://ps260.gosimian.com/assets/images/AI_Page_MainTitle_02_00000.png"
-        alt=""
-      />
-    </div>
-
     <!-- ============ PARAGRAPH 1 (full-width) ============ -->
     <section class="text-block">
       <p class="garamond-text">
-        At PS260, Artificial Intelligence is already integrated into our daily workflow. From bidding, concepting, previz, and tracking to VFX enhancement and localization, we use AI as a tool, not a substitute for taste, judgment, or craft. It helps us move faster, work smarter, and stay focused on the story, all while saving time and money behind the camera.
+        Agent Smith is a proprietary, AI-driven operating model developed by PS260 that optimizes creative input and output while reducing costs across the entire post-production ecosystem. Powered by a tri-node infrastructure, this system enables continuous workflows to maximize efficiency, scalability, and creative velocity across all channels.
       </p>
       <br />
-      <p class="garamond-text">The tools are changing. Our standards are not.</p>
+      <p class="garamond-text">At PS260 we fuse editorial instinct with AI precision to tell stories that move people. We leverage AI as a powerful and sophisticated instrument, never as a substitute for taste, artistry or craft. Agent Smith allows our teams to increase velocity and aesthetic while maintaining absolute focus on the core story.</p>
     </section>
 
     <!-- ============ ROW 1: Video 1 (left) + Paragraph 2 (right) ============ -->
@@ -115,7 +106,10 @@ onBeforeUnmount(() => {
       <div>
         <img class="ai-row-head" src="https://ps260.gosimian.com/assets/images/AI_Page_MainTitle_03_00000.png" alt="" />
         <p class="garamond-text">
-          AI doesn’t have to look like AI. Editors, vfx artists, and motion graphics artists at PS260 alter, refine, and remix every frame of generated content. From conception to delivery, from storyboards, prompt language, and reference images to grade, grain, and finishing touches, we ensure that the original idea remains intact, intentional, and uncompromised.
+          The PS260 team of editors, vfx artists, and motion graphics artists alter, refine, and remix every frame of generated content. We solve every problem throughout the entire creative process.
+        </p>
+        <p class="garamond-text">
+          From conception to delivery, from storyboards to prompt language, and from reference images to grade, grain, and finishing touches. We ensure that the original idea remains intact, intentional, and uncompromised.
         </p>
       </div>
     </section>
@@ -148,7 +142,7 @@ onBeforeUnmount(() => {
       <div>
         <img class="ai-row-head" src="https://ps260.gosimian.com/assets/images/AI_Page_MainTitle_04_00000.png" alt="" />
         <p class="garamond-text">
-          From streamlining research and shot listing to storyboard exploration, we utilize these tools to refine our workflow before any camera rolls. By automating schedule generation and repetitive tasks, AI serves as an essential production assistant. It empowers our teams to work with greater speed and precision, protecting the space needed to focus on the real story.
+          From streamlining research and shot listing to storyboard exploration, we utilize our proprietary Agent Smith’s tools to refine our workflow before any camera rolls. By automating schedule generation and repetitive tasks, Agent Smith empowers our teams to work with greater speed and precision, protecting the space needed to focus on the real story.
         </p>
       </div>
     </section>
